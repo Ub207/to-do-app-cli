@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)",
+      "Bash(mkdir:*)",
+      "Bash(powershell:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python -m unittest:*)",
+      "Bash(python:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: Console Todo App with full features\n\nFeatures:\n- Add, View, Update, Delete tasks\n- Toggle complete/incomplete\n- Priority (High/Medium/Low/None)\n- Tags support\n- Search, Filter, Sort\n- Due dates & Recurring tasks\n- JSON persistence\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")"
+    ]
+  }
+}
