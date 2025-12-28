@@ -21,7 +21,11 @@
       "Bash(venvScriptsactivate)",
       "Bash(pip install:*)",
       "Bash(uvicorn:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebSearch",
+      "Bash(test:*)",
+      "Bash(bash .specify/scripts/bash/create-phr.sh:*)",
+      "Bash(cat:*)"
     ]
   }
 }

@@ -1,4 +1,4 @@
-"""Custom exception classes for the Todo App."""
+"""Custom exception classes for the Todo App - Phase I."""
 
 
 class TodoAppError(Exception):
@@ -18,9 +18,4 @@ class TaskNotFoundError(TodoAppError):
 
 class AmbiguousIdError(TodoAppError):
     """Raised when a partial task ID matches multiple tasks."""
-    pass
-
-
-class StorageError(TodoAppError):
-    """Raised when file operations fail."""
     pass

@@ -1,28 +1,19 @@
-"""Main application class."""
+"""Application bootstrap - Phase I (In-Memory only)."""
 
-import signal
-import sys
-
-from src.services import TaskService, StorageService
-from src.ui import Menu, Display
+from .services.task_service import TaskService
+from .ui.menu import Menu
+from .ui.display import Display
 
 
 class TodoApp:
-    """Main application orchestrator."""
+    """Main application class for Todo CLI."""
 
-    def __init__(self, data_file: str = None) -> None:
-        """Initialize the application."""
-        self.storage = StorageService(data_file)
-        self.task_service = TaskService(self.storage)
+    def __init__(self) -> None:
+        """Initialize application with task service and menu."""
+        self.task_service = TaskService()
         self.menu = Menu(self.task_service)
-        signal.signal(signal.SIGINT, self._handle_interrupt)
 
     def run(self) -> None:
-        """Start the application."""
+        """Run the application."""
         Display.welcome()
         self.menu.main_loop()
-
-    def _handle_interrupt(self, signum, frame) -> None:
-        """Handle Ctrl+C gracefully."""
-        print("\n\nInterrupted. Goodbye!")
-        sys.exit(0)

@@ -1,6 +1,5 @@
-"""Data models."""
+"""Data models - Phase I (In-Memory only)."""
 
-from .priority import Priority
 from .task import Task
 
-__all__ = ["Priority", "Task"]
+__all__ = ["Task"]

@@ -11,10 +11,11 @@
 |-----------|-------|
 | **Phase** | I |
 | **Feature** | Todo CLI (In-Memory) |
-| **Version** | 1.0.0 |
-| **Status** | Draft |
+| **Version** | 1.1.0 |
+| **Status** | Approved |
 | **Created** | 2024-12-27 |
-| **Constitution** | v1.0.0 |
+| **Updated** | 2025-12-29 |
+| **Constitution** | v2.0.0 |
 
 ---
 
@@ -323,13 +324,84 @@ main.py
 
 ### 6.3 Code Standards
 
-Per Constitution Section 6.2:
+Per Constitution Article 6.3:
 - PEP 8 compliance
 - Type hints on all function signatures
 - Docstrings on all public interfaces
 - Functions under 30 lines
 - Single responsibility principle
 - No global mutable state
+
+### 6.4 Test-Driven Development Requirements
+
+Per Constitution Article 6.6, all implementation MUST follow TDD:
+
+**TDD Workflow:**
+1. **RED Phase** - Write failing tests first
+2. **GREEN Phase** - Implement minimal code to pass
+3. **REFACTOR Phase** - Improve structure while maintaining tests
+
+**Test Scenarios for Each User Story:**
+
+#### US-001: Add Task - Test Scenarios
+```python
+# RED: Write these tests first
+- test_add_task_with_title_only()
+- test_add_task_with_title_and_description()
+- test_add_task_generates_unique_id()
+- test_add_task_sets_pending_status()
+- test_add_task_empty_title_raises_error()
+- test_add_task_returns_task_id()
+```
+
+#### US-002: View All Tasks - Test Scenarios
+```python
+# RED: Write these tests first
+- test_list_tasks_shows_all_tasks()
+- test_list_tasks_empty_state_message()
+- test_list_tasks_shows_id_status_title()
+- test_list_tasks_creation_order()
+- test_list_tasks_displays_pending_and_completed()
+```
+
+#### US-003: View Task Details - Test Scenarios
+```python
+# RED: Write these tests first
+- test_view_task_by_full_id()
+- test_view_task_by_partial_id()
+- test_view_task_not_found_error()
+- test_view_task_displays_all_fields()
+```
+
+#### US-004: Update Task - Test Scenarios
+```python
+# RED: Write these tests first
+- test_update_task_title()
+- test_update_task_description()
+- test_update_task_both_fields()
+- test_update_task_keep_current_values()
+- test_update_task_clear_description()
+- test_update_timestamp_changes()
+- test_update_task_not_found_error()
+```
+
+#### US-005: Delete Task - Test Scenarios
+```python
+# RED: Write these tests first
+- test_delete_task_with_confirmation()
+- test_delete_task_cancel()
+- test_delete_task_not_found_error()
+- test_delete_task_removes_from_memory()
+```
+
+#### US-006: Toggle Completion - Test Scenarios
+```python
+# RED: Write these tests first
+- test_toggle_pending_to_complete()
+- test_toggle_complete_to_pending()
+- test_toggle_task_not_found_error()
+- test_toggle_updates_timestamp()
+```
 
 ---
 
@@ -385,5 +457,6 @@ The following features are explicitly **NOT** part of Phase I:
 
 ---
 
-*This specification complies with Constitution v1.0.0.*
+*This specification complies with Constitution v2.0.0 (Article-based governance).*
 *No implementation shall begin until this specification is approved.*
+*All implementation must follow TDD (Test-Driven Development) as mandated by Article 6.6.*

@@ -1,7 +1,8 @@
-# Phase I Implementation Tasks
+# Phase I Implementation Tasks: Todo CLI (In-Memory)
 
-> Atomic, sequential tasks for Todo CLI (In-Memory)
-> All tasks derived from spec.md and plan.md
+> **Atomic, TDD-driven tasks** organized by user story
+> Derived from spec.md v1.1.0 and plan.md v1.1.0
+> Complies with Constitution v2.0.0 Article 6.6 (TDD Mandate)
 
 ---
 
@@ -11,796 +12,470 @@
 |-----------|-------|
 | **Phase** | I |
 | **Feature** | Todo CLI (In-Memory) |
-| **Spec Version** | 1.0.0 |
-| **Plan Version** | 1.0.0 |
-| **Total Tasks** | 24 |
+| **Spec Version** | 1.1.0 |
+| **Plan Version** | 1.1.0 |
+| **Constitution** | v2.0.0 |
+| **Total Tasks** | 45 |
 | **Created** | 2024-12-27 |
+| **Updated** | 2025-12-29 |
+| **TDD Approach** | RED-GREEN-REFACTOR |
 
 ---
 
-## Task Legend
+## Task Format
 
-| Status | Meaning |
-|--------|---------|
-| `[ ]` | Not started |
-| `[~]` | In progress |
-| `[x]` | Completed |
-| `[!]` | Blocked |
-
----
-
-## Section 1: Project Setup & Exceptions
-
-### TASK-001: Create project directory structure
-
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-001 |
-| **Description** | Create the folder structure for Phase I application |
-| **Preconditions** | None (first task) |
-| **Expected Output** | Empty directory tree matching plan section 1.2 |
-| **Artifacts** | Create directories: `src/`, `src/models/`, `src/services/`, `src/ui/` |
-| **Spec Reference** | spec.md §6.1 Architecture |
-| **Plan Reference** | plan.md §1.2 File Structure |
-
-**Steps:**
-1. Create `src/` directory
-2. Create `src/models/` directory
-3. Create `src/services/` directory
-4. Create `src/ui/` directory
-
-**Status:** `[x]`
-
----
-
-### TASK-002: Create package __init__.py files
-
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-002 |
-| **Description** | Create __init__.py files to mark directories as Python packages |
-| **Preconditions** | TASK-001 completed |
-| **Expected Output** | All directories are valid Python packages |
-| **Artifacts** | Create: `src/__init__.py`, `src/models/__init__.py`, `src/services/__init__.py`, `src/ui/__init__.py` |
-| **Spec Reference** | spec.md §6.1 Architecture |
-| **Plan Reference** | plan.md §1.2 File Structure |
-
-**Steps:**
-1. Create `src/__init__.py` (empty)
-2. Create `src/models/__init__.py` (will export Task)
-3. Create `src/services/__init__.py` (will export TaskService)
-4. Create `src/ui/__init__.py` (will export Menu, Display, InputHandler)
-
-**Status:** `[x]`
-
----
-
-### TASK-003: Create custom exceptions module
-
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-003 |
-| **Description** | Create exception hierarchy for application errors |
-| **Preconditions** | TASK-001 completed |
-| **Expected Output** | Exception classes: TodoAppError, TaskNotFoundError, AmbiguousIdError, ValidationError |
-| **Artifacts** | Create: `src/exceptions.py` |
-| **Spec Reference** | spec.md §5.1 Error Cases |
-| **Plan Reference** | plan.md §6.1 Exception Hierarchy |
-
-**Implementation:**
-```python
-class TodoAppError(Exception):
-    """Base exception for all application errors."""
-    pass
-
-class TaskNotFoundError(TodoAppError):
-    """Raised when task ID doesn't match any task."""
-    pass
-
-class AmbiguousIdError(TodoAppError):
-    """Raised when partial ID matches multiple tasks."""
-    pass
-
-class ValidationError(TodoAppError):
-    """Raised when input fails validation."""
-    pass
+Each task follows this format:
+```
+- [ ] [TaskID] [P] [Story] Description with file path
 ```
 
-**Status:** `[x]`
+**Legend:**
+- `[TaskID]`: Sequential task number (T001, T002, etc.)
+- `[P]`: Task can be executed in parallel with others
+- `[Story]`: User story reference (US1, US2, US3, etc.)
+- File paths are always absolute or relative to project root
 
 ---
 
-## Section 2: Task Data Model
+## Phase 1: Setup & Foundation
 
-### TASK-004: Create Task dataclass
+### Project Initialization
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-004 |
-| **Description** | Create Task dataclass with all required fields |
-| **Preconditions** | TASK-002 completed |
-| **Expected Output** | Task class with id, title, description, completed, created_at, updated_at |
-| **Artifacts** | Create: `src/models/task.py` |
-| **Spec Reference** | spec.md §3.1 Task Entity, §3.2 Field Specifications |
-| **Plan Reference** | plan.md §2.2 Task Model |
+- [ ] T001 Create project directory structure (src/, src/models/, src/services/, src/ui/) per plan.md §1.2
+- [ ] T002 Create Python package markers (__init__.py) in all directories per plan.md §1.2
+- [ ] T003 [P] Create custom exceptions module in src/exceptions.py per plan.md §6.1
 
-**Implementation:**
-```python
-from dataclasses import dataclass, field
-from datetime import datetime
-from uuid import uuid4
-
-@dataclass
-class Task:
-    id: str = field(default_factory=lambda: str(uuid4()))
-    title: str = ""
-    description: str = ""
-    completed: bool = False
-    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
-```
-
-**Status:** `[x]`
+**Spec References:** spec.md §6.1 Architecture
+**Plan References:** plan.md §1.2 File Structure, §6.1 Exception Hierarchy
 
 ---
 
-### TASK-005: Add short_id property to Task
+## Phase 2: Core Data Model & Service Foundation
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-005 |
-| **Description** | Add short_id property that returns first 8 characters of UUID |
-| **Preconditions** | TASK-004 completed |
-| **Expected Output** | Task.short_id returns "a1b2c3d4" from full UUID |
-| **Artifacts** | Modify: `src/models/task.py` |
-| **Spec Reference** | spec.md §3.3 Short ID |
-| **Plan Reference** | plan.md §3.3 ID Display |
+### Task Model (Foundational - Required for All Stories)
 
-**Implementation:**
-```python
-@property
-def short_id(self) -> str:
-    """Return first 8 characters of UUID."""
-    return self.id[:8]
-```
+- [ ] T004 [RED] Write tests for Task dataclass creation in tests/test_task.py
+- [ ] T005 [GREEN] Implement Task dataclass in src/models/task.py with 6 fields per spec.md §3.1
+- [ ] T006 [GREEN] Add short_id property to Task in src/models/task.py per spec.md §3.3
+- [ ] T007 [REFACTOR] Add type hints and docstrings to Task class per plan.md §1.3
 
-**Status:** `[x]`
+### TaskService Foundation
+
+- [ ] T008 [RED] Write tests for TaskService initialization in tests/test_task_service.py
+- [ ] T009 [GREEN] Create TaskService class skeleton in src/services/task_service.py per plan.md §2.1
+- [ ] T010 [GREEN] Implement in-memory storage (dict[str, Task]) in TaskService per plan.md §2.1
+- [ ] T011 [REFACTOR] Add type hints and docstrings to TaskService init
+
+**Spec References:** spec.md §3 Data Model
+**Plan References:** plan.md §2 In-Memory Data Structures, §7.1 TaskService Interface
 
 ---
 
-### TASK-006: Export Task from models package
+## Phase 3: User Story 1 - Add Task (US-001)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-006 |
-| **Description** | Update models __init__.py to export Task class |
-| **Preconditions** | TASK-005 completed |
-| **Expected Output** | `from src.models import Task` works |
-| **Artifacts** | Modify: `src/models/__init__.py` |
-| **Spec Reference** | spec.md §6.1 Architecture |
-| **Plan Reference** | plan.md §1.2 File Structure |
+**Goal:** User can add a new task with title and optional description
 
-**Implementation:**
-```python
-from src.models.task import Task
+**Independent Test Criteria:**
+- User can create task with title only
+- User can create task with title and description
+- Empty title raises ValidationError
+- Task gets unique ID and timestamps
+- Task is retrievable after creation
 
-__all__ = ["Task"]
-```
+### Tests (RED Phase)
 
-**Status:** `[x]`
+- [ ] T012 [RED] [US1] Write test_add_task_with_title_only() in tests/test_task_service.py per spec.md §6.4 US-001
+- [ ] T013 [RED] [US1] Write test_add_task_with_title_and_description() per spec.md §6.4 US-001
+- [ ] T014 [RED] [US1] Write test_add_task_generates_unique_id() per spec.md §6.4 US-001
+- [ ] T015 [RED] [US1] Write test_add_task_sets_pending_status() per spec.md §6.4 US-001
+- [ ] T016 [RED] [US1] Write test_add_task_empty_title_raises_error() per spec.md §6.4 US-001
+- [ ] T017 [RED] [US1] Write test_add_task_returns_task_id() per spec.md §6.4 US-001
 
----
+### Implementation (GREEN Phase)
 
-## Section 3: Task Service (In-Memory Storage)
+- [ ] T018 [GREEN] [US1] Implement add_task() method in src/services/task_service.py per plan.md §7.1
+- [ ] T019 [GREEN] [US1] Add title validation (non-empty) in add_task() per spec.md §3.2
+- [ ] T020 [GREEN] [US1] Add timestamp generation in add_task() per spec.md §3.1
 
-### TASK-007: Create TaskService class with storage
+### Refactoring
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-007 |
-| **Description** | Create TaskService with in-memory dict storage |
-| **Preconditions** | TASK-006 completed |
-| **Expected Output** | TaskService class with _tasks dict initialized |
-| **Artifacts** | Create: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §6.1 Architecture |
-| **Plan Reference** | plan.md §2.1 Primary Storage |
+- [ ] T021 [REFACTOR] [US1] Add comprehensive docstrings to add_task() method
+- [ ] T022 [REFACTOR] [US1] Ensure add_task() follows single responsibility principle
 
-**Implementation:**
-```python
-from src.models import Task
-
-class TaskService:
-    """Service for managing tasks in memory."""
-
-    def __init__(self) -> None:
-        self._tasks: dict[str, Task] = {}
-```
-
-**Status:** `[x]`
+**Spec References:** spec.md §2 US-001, §6.4 TDD Test Scenarios
+**Plan References:** plan.md §7.1 TaskService Interface
 
 ---
 
-### TASK-008: Implement add_task method
+## Phase 4: User Story 2 - View All Tasks (US-002)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-008 |
-| **Description** | Implement method to create and store new task |
-| **Preconditions** | TASK-007 completed |
-| **Expected Output** | add_task(title, description) creates Task, stores it, returns it |
-| **Artifacts** | Modify: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §2 US-001 Add a Task |
-| **Plan Reference** | plan.md §7.1 TaskService Interface |
+**Goal:** User can see all their tasks in a list
 
-**Implementation:**
-```python
-def add_task(self, title: str, description: str = "") -> Task:
-    """Create a new task."""
-    title = title.strip()
-    if not title:
-        raise ValidationError("Title cannot be empty.")
+**Independent Test Criteria:**
+- Returns all tasks (pending and completed)
+- Returns empty list when no tasks exist
+- Tasks are in creation order
+- Each task shows ID (short form), status, title
 
-    task = Task(title=title, description=description.strip())
-    self._tasks[task.id] = task
-    return task
-```
+### Tests (RED Phase)
 
-**Status:** `[x]`
+- [ ] T023 [RED] [US2] Write test_list_tasks_shows_all_tasks() in tests/test_task_service.py per spec.md §6.4 US-002
+- [ ] T024 [RED] [US2] Write test_list_tasks_empty_state_message() per spec.md §6.4 US-002
+- [ ] T025 [RED] [US2] Write test_list_tasks_shows_id_status_title() per spec.md §6.4 US-002
+- [ ] T026 [RED] [US2] Write test_list_tasks_creation_order() per spec.md §6.4 US-002
+- [ ] T027 [RED] [US2] Write test_list_tasks_displays_pending_and_completed() per spec.md §6.4 US-002
 
----
+### Implementation (GREEN Phase)
 
-### TASK-009: Implement get_all_tasks method
+- [ ] T028 [GREEN] [US2] Implement get_all_tasks() in src/services/task_service.py per plan.md §7.1
+- [ ] T029 [GREEN] [US2] Implement get_task_count() for statistics in src/services/task_service.py per plan.md §7.1
+- [ ] T030 [GREEN] [US2] Create Display.task_list() in src/ui/display.py per plan.md §7.2
+- [ ] T031 [GREEN] [US2] Add formatted output with headers and legend in Display.task_list() per spec.md §4.3
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-009 |
-| **Description** | Implement method to return all tasks in creation order |
-| **Preconditions** | TASK-007 completed |
-| **Expected Output** | Returns list of all Task objects |
-| **Artifacts** | Modify: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §2 US-002 View All Tasks |
-| **Plan Reference** | plan.md §7.1 TaskService Interface |
+### Refactoring
 
-**Implementation:**
-```python
-def get_all_tasks(self) -> list[Task]:
-    """Get all tasks in creation order."""
-    return list(self._tasks.values())
-```
+- [ ] T032 [REFACTOR] [US2] Optimize task_list display formatting
+- [ ] T033 [REFACTOR] [US2] Add type hints to Display.task_list()
 
-**Status:** `[x]`
+**Spec References:** spec.md §2 US-002, §4.3 List Tasks, §6.4 TDD Test Scenarios
+**Plan References:** plan.md §7.1 TaskService Interface, §7.2 Display Interface
 
 ---
 
-### TASK-010: Implement get_task method
+## Phase 5: User Story 3 - View Task Details (US-003)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-010 |
-| **Description** | Implement method to get task by exact ID |
-| **Preconditions** | TASK-007 completed |
-| **Expected Output** | Returns Task or raises TaskNotFoundError |
-| **Artifacts** | Modify: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §2 US-003 View Task Details |
-| **Plan Reference** | plan.md §7.1 TaskService Interface |
+**Goal:** User can view full details of a specific task
 
-**Implementation:**
-```python
-def get_task(self, task_id: str) -> Task:
-    """Get task by exact ID."""
-    if task_id not in self._tasks:
-        raise TaskNotFoundError(f"No task found with ID '{task_id}'.")
-    return self._tasks[task_id]
-```
+**Independent Test Criteria:**
+- Can find task by full ID
+- Can find task by partial ID (min 4 chars)
+- Error when task not found
+- Error when partial ID is ambiguous
+- Displays all 6 task fields
 
-**Status:** `[x]`
+### Tests (RED Phase)
 
----
+- [ ] T034 [RED] [US3] Write test_view_task_by_full_id() in tests/test_task_service.py per spec.md §6.4 US-003
+- [ ] T035 [RED] [US3] Write test_view_task_by_partial_id() per spec.md §6.4 US-003
+- [ ] T036 [RED] [US3] Write test_view_task_not_found_error() per spec.md §6.4 US-003
+- [ ] T037 [RED] [US3] Write test_view_task_displays_all_fields() per spec.md §6.4 US-003
 
-### TASK-011: Implement find_by_partial_id method
+### Implementation (GREEN Phase)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-011 |
-| **Description** | Implement partial ID matching with prefix search |
-| **Preconditions** | TASK-010 completed |
-| **Expected Output** | Returns Task for unique match, raises error otherwise |
-| **Artifacts** | Modify: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §3.3 Short ID, §5.1 Error Cases |
-| **Plan Reference** | plan.md §3.2 Short ID Resolution |
+- [ ] T038 [GREEN] [US3] Implement get_task() in src/services/task_service.py per plan.md §7.1
+- [ ] T039 [GREEN] [US3] Implement find_by_partial_id() in src/services/task_service.py per plan.md §3.2
+- [ ] T040 [GREEN] [US3] Add ambiguous ID detection in find_by_partial_id() per spec.md §5.1
+- [ ] T041 [GREEN] [US3] Create Display.task_details() in src/ui/display.py per plan.md §7.2
 
-**Implementation:**
-```python
-def find_by_partial_id(self, partial: str) -> Task:
-    """Find task by partial ID prefix."""
-    matches = [
-        task for task in self._tasks.values()
-        if task.id.startswith(partial)
-    ]
+### Refactoring
 
-    if len(matches) == 0:
-        raise TaskNotFoundError(f"No task found with ID '{partial}'.")
-    if len(matches) > 1:
-        raise AmbiguousIdError(
-            f"Multiple tasks match '{partial}'. Please use more characters."
-        )
-    return matches[0]
-```
+- [ ] T042 [REFACTOR] [US3] Optimize partial ID matching algorithm
+- [ ] T043 [REFACTOR] [US3] Add comprehensive error handling in find_by_partial_id()
 
-**Status:** `[x]`
+**Spec References:** spec.md §2 US-003, §3.3 Short ID, §4.3 View Task Details, §6.4 TDD Test Scenarios
+**Plan References:** plan.md §3.2 Short ID Resolution, §7.1 TaskService Interface
 
 ---
 
-### TASK-012: Implement update_task method
+## Phase 6: User Story 4 - Update Task (US-004)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-012 |
-| **Description** | Implement method to update task title and/or description |
-| **Preconditions** | TASK-010 completed |
-| **Expected Output** | Updates task fields, updates timestamp, returns task |
-| **Artifacts** | Modify: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §2 US-004 Update a Task |
-| **Plan Reference** | plan.md §7.1 TaskService Interface |
+**Goal:** User can update an existing task's title or description
 
-**Implementation:**
-```python
-def update_task(
-    self,
-    task_id: str,
-    title: str | None = None,
-    description: str | None = None
-) -> Task:
-    """Update task fields."""
-    task = self.get_task(task_id)
+**Independent Test Criteria:**
+- Can update title only
+- Can update description only
+- Can update both fields
+- Can keep current values (press Enter)
+- Can clear description ('-')
+- Updated timestamp changes
+- Error when task not found
 
-    if title is not None:
-        title = title.strip()
-        if not title:
-            raise ValidationError("Title cannot be empty.")
-        task.title = title
+### Tests (RED Phase)
 
-    if description is not None:
-        task.description = description.strip()
+- [ ] T044 [RED] [US4] Write test_update_task_title() in tests/test_task_service.py per spec.md §6.4 US-004
+- [ ] T045 [RED] [US4] Write test_update_task_description() per spec.md §6.4 US-004
+- [ ] T046 [RED] [US4] Write test_update_task_both_fields() per spec.md §6.4 US-004
+- [ ] T047 [RED] [US4] Write test_update_task_keep_current_values() per spec.md §6.4 US-004
+- [ ] T048 [RED] [US4] Write test_update_task_clear_description() per spec.md §6.4 US-004
+- [ ] T049 [RED] [US4] Write test_update_timestamp_changes() per spec.md §6.4 US-004
+- [ ] T050 [RED] [US4] Write test_update_task_not_found_error() per spec.md §6.4 US-004
 
-    task.updated_at = datetime.now().isoformat()
-    return task
-```
+### Implementation (GREEN Phase)
 
-**Status:** `[x]`
+- [ ] T051 [GREEN] [US4] Implement update_task() in src/services/task_service.py per plan.md §7.1
+- [ ] T052 [GREEN] [US4] Add optional parameter handling (None = keep) in update_task()
+- [ ] T053 [GREEN] [US4] Add updated_at timestamp refresh in update_task() per spec.md §3.1
+- [ ] T054 [GREEN] [US4] Add empty title validation in update_task() per spec.md §5.2
 
----
+### Refactoring
 
-### TASK-013: Implement delete_task method
+- [ ] T055 [REFACTOR] [US4] Simplify update_task() parameter handling
+- [ ] T056 [REFACTOR] [US4] Add defensive validation for update_task()
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-013 |
-| **Description** | Implement method to remove task from storage |
-| **Preconditions** | TASK-010 completed |
-| **Expected Output** | Removes task from _tasks dict |
-| **Artifacts** | Modify: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §2 US-005 Delete a Task |
-| **Plan Reference** | plan.md §7.1 TaskService Interface |
-
-**Implementation:**
-```python
-def delete_task(self, task_id: str) -> None:
-    """Delete task by ID."""
-    if task_id not in self._tasks:
-        raise TaskNotFoundError(f"No task found with ID '{task_id}'.")
-    del self._tasks[task_id]
-```
-
-**Status:** `[x]`
+**Spec References:** spec.md §2 US-004, §4.3 Update Task, §6.4 TDD Test Scenarios
+**Plan References:** plan.md §7.1 TaskService Interface
 
 ---
 
-### TASK-014: Implement toggle_complete method
+## Phase 7: User Story 5 - Delete Task (US-005)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-014 |
-| **Description** | Implement method to toggle task completion status |
-| **Preconditions** | TASK-010 completed |
-| **Expected Output** | Toggles completed flag, updates timestamp, returns task |
-| **Artifacts** | Modify: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §2 US-006 Toggle Task Completion |
-| **Plan Reference** | plan.md §7.1 TaskService Interface |
+**Goal:** User can delete a task they no longer need
 
-**Implementation:**
-```python
-def toggle_complete(self, task_id: str) -> Task:
-    """Toggle task completion status."""
-    task = self.get_task(task_id)
-    task.completed = not task.completed
-    task.updated_at = datetime.now().isoformat()
-    return task
-```
+**Independent Test Criteria:**
+- Task is removed from memory
+- Confirmation required before deletion
+- Can cancel deletion
+- Error when task not found
+- Deleted task cannot be retrieved
 
-**Status:** `[x]`
+### Tests (RED Phase)
 
----
+- [ ] T057 [RED] [US5] Write test_delete_task_with_confirmation() in tests/test_task_service.py per spec.md §6.4 US-005
+- [ ] T058 [RED] [US5] Write test_delete_task_cancel() per spec.md §6.4 US-005
+- [ ] T059 [RED] [US5] Write test_delete_task_not_found_error() per spec.md §6.4 US-005
+- [ ] T060 [RED] [US5] Write test_delete_task_removes_from_memory() per spec.md §6.4 US-005
 
-### TASK-015: Implement get_task_count method
+### Implementation (GREEN Phase)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-015 |
-| **Description** | Implement method to return total and completed counts |
-| **Preconditions** | TASK-007 completed |
-| **Expected Output** | Returns tuple (total, completed) |
-| **Artifacts** | Modify: `src/services/task_service.py` |
-| **Spec Reference** | spec.md §4.3 List Tasks display |
-| **Plan Reference** | plan.md §7.1 TaskService Interface |
+- [ ] T061 [GREEN] [US5] Implement delete_task() in src/services/task_service.py per plan.md §7.1
+- [ ] T062 [GREEN] [US5] Add permanent removal from storage dict in delete_task()
+- [ ] T063 [GREEN] [US5] Add TaskNotFoundError handling in delete_task() per spec.md §5.1
 
-**Implementation:**
-```python
-def get_task_count(self) -> tuple[int, int]:
-    """Get task counts."""
-    total = len(self._tasks)
-    completed = sum(1 for t in self._tasks.values() if t.completed)
-    return total, completed
-```
+### Refactoring
 
-**Status:** `[x]`
+- [ ] T064 [REFACTOR] [US5] Add defensive checks to delete_task()
+- [ ] T065 [REFACTOR] [US5] Ensure delete_task() is idempotent
+
+**Spec References:** spec.md §2 US-005, §4.3 Delete Task, §6.4 TDD Test Scenarios
+**Plan References:** plan.md §7.1 TaskService Interface
 
 ---
 
-### TASK-016: Export TaskService from services package
+## Phase 8: User Story 6 - Toggle Task Completion (US-006)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-016 |
-| **Description** | Update services __init__.py to export TaskService |
-| **Preconditions** | TASK-015 completed |
-| **Expected Output** | `from src.services import TaskService` works |
-| **Artifacts** | Modify: `src/services/__init__.py` |
-| **Spec Reference** | spec.md §6.1 Architecture |
-| **Plan Reference** | plan.md §1.2 File Structure |
+**Goal:** User can mark a task as complete or incomplete
 
-**Status:** `[x]`
+**Independent Test Criteria:**
+- Pending task becomes completed
+- Completed task becomes pending
+- Error when task not found
+- Updated timestamp changes on toggle
 
----
+### Tests (RED Phase)
 
-## Section 4: UI Layer - Input Handler
+- [ ] T066 [RED] [US6] Write test_toggle_pending_to_complete() in tests/test_task_service.py per spec.md §6.4 US-006
+- [ ] T067 [RED] [US6] Write test_toggle_complete_to_pending() per spec.md §6.4 US-006
+- [ ] T068 [RED] [US6] Write test_toggle_task_not_found_error() per spec.md §6.4 US-006
+- [ ] T069 [RED] [US6] Write test_toggle_updates_timestamp() per spec.md §6.4 US-006
 
-### TASK-017: Create InputHandler class
+### Implementation (GREEN Phase)
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-017 |
-| **Description** | Create InputHandler with prompt, menu_choice, and confirm methods |
-| **Preconditions** | TASK-002 completed |
-| **Expected Output** | InputHandler class with 3 static methods |
-| **Artifacts** | Create: `src/ui/input_handler.py` |
-| **Spec Reference** | spec.md §5.2 Input Validation |
-| **Plan Reference** | plan.md §7.3 InputHandler Interface |
+- [ ] T070 [GREEN] [US6] Implement toggle_complete() in src/services/task_service.py per plan.md §7.1
+- [ ] T071 [GREEN] [US6] Add boolean flip logic in toggle_complete()
+- [ ] T072 [GREEN] [US6] Add updated_at timestamp refresh in toggle_complete()
 
-**Implementation:**
-```python
-class InputHandler:
-    """Static methods for user input."""
+### Refactoring
 
-    @staticmethod
-    def prompt(message: str) -> str:
-        """Get user input with prompt."""
-        return input(message).strip()
+- [ ] T073 [REFACTOR] [US6] Simplify toggle_complete() logic
+- [ ] T074 [REFACTOR] [US6] Add clear status messaging in toggle_complete()
 
-    @staticmethod
-    def menu_choice() -> str:
-        """Get menu choice from user."""
-        return input("Enter choice: ").strip().lower()
-
-    @staticmethod
-    def confirm(message: str) -> bool:
-        """Get yes/no confirmation."""
-        response = input(message).strip().lower()
-        return response == "y"
-```
-
-**Status:** `[x]`
+**Spec References:** spec.md §2 US-006, §4.3 Toggle Complete, §6.4 TDD Test Scenarios
+**Plan References:** plan.md §7.1 TaskService Interface
 
 ---
 
-## Section 5: UI Layer - Display
+## Phase 9: CLI User Interface Layer
 
-### TASK-018: Create Display class with basic methods
+### Input Handling
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-018 |
-| **Description** | Create Display class with welcome, menu, help, success, error, goodbye |
-| **Preconditions** | TASK-002 completed |
-| **Expected Output** | Display class with output formatting methods |
-| **Artifacts** | Create: `src/ui/display.py` |
-| **Spec Reference** | spec.md §4.1-4.4 CLI Interaction Flow |
-| **Plan Reference** | plan.md §7.2 Display Interface |
+- [ ] T075 [P] Create InputHandler class skeleton in src/ui/input_handler.py per plan.md §7.3
+- [ ] T076 [P] Implement InputHandler.prompt() in src/ui/input_handler.py per plan.md §7.3
+- [ ] T077 [P] Implement InputHandler.menu_choice() in src/ui/input_handler.py per plan.md §7.3
+- [ ] T078 [P] Implement InputHandler.confirm() in src/ui/input_handler.py per plan.md §7.3
 
-**Methods to implement:**
-- `welcome()` - Banner per spec §4.1
-- `menu()` - Menu per spec §4.2
-- `help()` - Help text
-- `success(message)` - Success output
-- `error(message)` - "Error: " prefix
-- `goodbye()` - Exit message per spec §4.4
+### Display Output
 
-**Status:** `[x]`
+- [ ] T079 [P] Create Display class skeleton in src/ui/display.py per plan.md §7.2
+- [ ] T080 [P] Implement Display.welcome() banner in src/ui/display.py per spec.md §4.1
+- [ ] T081 [P] Implement Display.menu() in src/ui/display.py per spec.md §4.2
+- [ ] T082 [P] Implement Display.help() in src/ui/display.py per plan.md §7.2
+- [ ] T083 [P] Implement Display.success() in src/ui/display.py per plan.md §7.2
+- [ ] T084 [P] Implement Display.error() in src/ui/display.py per plan.md §7.2
+- [ ] T085 [P] Implement Display.goodbye() in src/ui/display.py per spec.md §4.4
 
----
+### Menu Controller
 
-### TASK-019: Implement task_list display method
+- [ ] T086 Create Menu class skeleton in src/ui/menu.py per plan.md §4.1
+- [ ] T087 Implement Menu.__init__() with TaskService injection per plan.md §1.3
+- [ ] T088 Implement Menu.main_loop() with while-true pattern per plan.md §4.1
+- [ ] T089 Add command routing (if-elif) in main_loop() per plan.md §4.1
+- [ ] T090 Implement Menu._handle_add() calling TaskService.add_task() per plan.md §4.3
+- [ ] T091 Implement Menu._handle_list() calling TaskService.get_all_tasks() per plan.md §4.3
+- [ ] T092 Implement Menu._handle_view() calling TaskService.get_task() per plan.md §4.3
+- [ ] T093 Implement Menu._handle_update() calling TaskService.update_task() per plan.md §4.3
+- [ ] T094 Implement Menu._handle_delete() with confirmation per plan.md §4.3
+- [ ] T095 Implement Menu._handle_toggle() calling TaskService.toggle_complete() per plan.md §4.3
+- [ ] T096 Implement Menu._handle_help() displaying help text per plan.md §4.3
+- [ ] T097 Implement Menu._handle_exit() with goodbye message per plan.md §4.3
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-019 |
-| **Description** | Implement task list display with ID, status, title columns |
-| **Preconditions** | TASK-018 completed, TASK-006 completed |
-| **Expected Output** | Formatted task list per spec §4.3 List Tasks |
-| **Artifacts** | Modify: `src/ui/display.py` |
-| **Spec Reference** | spec.md §4.3 List Tasks format |
-| **Plan Reference** | plan.md §7.2 Display Interface |
-
-**Format:**
-```
-================================================================================
-                        TASKS (3 total, 1 completed)
-================================================================================
-ID        STATUS   TITLE
---------------------------------------------------------------------------------
-a1b2c3d4  [ ]      Buy groceries
-================================================================================
-Legend: [x] = Completed  [ ] = Pending
-```
-
-**Status:** `[x]`
+**Spec References:** spec.md §4 CLI Interaction Flow
+**Plan References:** plan.md §4 CLI Control Flow, §7.2-7.3 Interface Contracts
 
 ---
 
-### TASK-020: Implement task_details display method
+## Phase 10: Application Bootstrap & Integration
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-020 |
-| **Description** | Implement full task details display |
-| **Preconditions** | TASK-018 completed, TASK-006 completed |
-| **Expected Output** | Formatted task details per spec §4.3 View Task Details |
-| **Artifacts** | Modify: `src/ui/display.py` |
-| **Spec Reference** | spec.md §4.3 View Task Details format |
-| **Plan Reference** | plan.md §7.2 Display Interface |
+### Application Entry
 
-**Format:**
-```
-================================================================================
-                              TASK DETAILS
-================================================================================
-ID:          a1b2c3d4-e5f6-7890-abcd-ef1234567890
-Title:       Buy groceries
-Description: Milk, bread, eggs
-Status:      Pending
-Created:     2024-12-27 10:30:45
-Updated:     2024-12-27 10:30:45
-================================================================================
-```
+- [ ] T098 Create TodoApp class in src/app.py per plan.md §1.1
+- [ ] T099 Implement TodoApp.__init__() creating TaskService and Menu instances per plan.md §1.1
+- [ ] T100 Implement TodoApp.run() calling Display.welcome() and Menu.main_loop() per plan.md §1.1
+- [ ] T101 Create main.py entry point calling TodoApp().run() per plan.md §1.2
 
-**Status:** `[x]`
+### Error Handling Integration
+
+- [ ] T102 Add try-except TodoAppError in Menu.main_loop() per plan.md §6.2
+- [ ] T103 Add error display for all command handlers per plan.md §6.4
+- [ ] T104 Ensure graceful degradation (return to menu) on all errors per plan.md §6.4
+
+**Spec References:** spec.md §4.1 Application Startup, §4.4 Exit, §5 Error Handling
+**Plan References:** plan.md §1.1 Architecture Overview, §6 Error Handling Strategy
 
 ---
 
-## Section 6: UI Layer - Menu Controller
+## Phase 11: Polish & Cross-Cutting Concerns
 
-### TASK-021: Create Menu class with main_loop
+### Code Quality
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-021 |
-| **Description** | Create Menu class with main_loop and command routing |
-| **Preconditions** | TASK-016, TASK-017, TASK-020 completed |
-| **Expected Output** | Menu class with while-loop and choice dispatch |
-| **Artifacts** | Create: `src/ui/menu.py` |
-| **Spec Reference** | spec.md §4.2 Main Menu |
-| **Plan Reference** | plan.md §4.1 Main Loop, §4.2 State Machine |
+- [ ] T105 [P] Add comprehensive type hints to all public interfaces per plan.md §1.3
+- [ ] T106 [P] Add docstrings to all public methods per plan.md §1.3
+- [ ] T107 [P] Verify all functions are under 30 lines per plan.md §1.3
+- [ ] T108 [P] Run PEP 8 validation on all modules per spec.md §6.3
 
-**Implementation skeleton:**
-```python
-class Menu:
-    def __init__(self, task_service: TaskService) -> None:
-        self.task_service = task_service
+### Package Exports
 
-    def main_loop(self) -> None:
-        while True:
-            Display.menu()
-            choice = InputHandler.menu_choice()
-            try:
-                # Route to handlers
-            except TodoAppError as e:
-                Display.error(str(e))
-```
+- [ ] T109 Update src/models/__init__.py to export Task
+- [ ] T110 Update src/services/__init__.py to export TaskService
+- [ ] T111 Update src/ui/__init__.py to export Menu, Display, InputHandler
 
-**Status:** `[x]`
+### Final Validation
+
+- [ ] T112 Test complete user journey: add → list → view → update → toggle → delete
+- [ ] T113 Verify all error cases show proper messages per spec.md §5.1
+- [ ] T114 Verify application exits cleanly per spec.md §4.4
+- [ ] T115 Verify no file I/O or network access per Constitution Article 4.3
+- [ ] T116 Run all unit tests and verify 90%+ coverage per Constitution Article 6.5
+
+**Spec References:** spec.md §6.3 Code Standards, §7 Acceptance Criteria
+**Plan References:** plan.md §1.3 Module Responsibilities
+**Constitution References:** Article 4.3 Phase I Scope, Article 6 Quality Principles
 
 ---
 
-### TASK-022: Implement all menu command handlers
+## Task Dependencies & Execution Strategy
 
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-022 |
-| **Description** | Implement _handle_add, _handle_list, _handle_view, _handle_update, _handle_delete, _handle_toggle, _handle_help, _handle_exit |
-| **Preconditions** | TASK-021 completed |
-| **Expected Output** | All 8 command handlers working |
-| **Artifacts** | Modify: `src/ui/menu.py` |
-| **Spec Reference** | spec.md §4.3 Command Flow Examples |
-| **Plan Reference** | plan.md §4.3 Command Handler Pattern |
-
-**Handlers:**
-1. `_handle_add()` - US-001
-2. `_handle_list()` - US-002
-3. `_handle_view()` - US-003
-4. `_handle_update()` - US-004
-5. `_handle_delete()` - US-005
-6. `_handle_toggle()` - US-006
-7. `_handle_help()` - Display help
-8. `_handle_exit()` - sys.exit(0)
-
-**Status:** `[x]`
-
----
-
-### TASK-023: Export UI classes from ui package
-
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-023 |
-| **Description** | Update ui __init__.py to export Menu, Display, InputHandler |
-| **Preconditions** | TASK-022 completed |
-| **Expected Output** | `from src.ui import Menu, Display, InputHandler` works |
-| **Artifacts** | Modify: `src/ui/__init__.py` |
-| **Spec Reference** | spec.md §6.1 Architecture |
-| **Plan Reference** | plan.md §1.2 File Structure |
-
-**Status:** `[x]`
-
----
-
-## Section 7: Application Bootstrap
-
-### TASK-024: Create TodoApp class and main.py
-
-| Attribute | Value |
-|-----------|-------|
-| **ID** | TASK-024 |
-| **Description** | Create app.py with TodoApp class and main.py entry point |
-| **Preconditions** | TASK-023 completed |
-| **Expected Output** | Application runs with `python main.py` |
-| **Artifacts** | Create: `src/app.py`, `main.py` |
-| **Spec Reference** | spec.md §4.1 Application Startup, §4.4 Exit |
-| **Plan Reference** | plan.md §1.1 Architecture Overview |
-
-**Implementation:**
-
-`src/app.py`:
-```python
-from src.services import TaskService
-from src.ui import Menu, Display
-
-class TodoApp:
-    """Main application class."""
-
-    def __init__(self) -> None:
-        self.task_service = TaskService()
-        self.menu = Menu(self.task_service)
-
-    def run(self) -> None:
-        """Run the application."""
-        Display.welcome()
-        self.menu.main_loop()
-```
-
-`main.py`:
-```python
-from src.app import TodoApp
-
-def main() -> None:
-    app = TodoApp()
-    app.run()
-
-if __name__ == "__main__":
-    main()
-```
-
-**Status:** `[x]`
-
----
-
-## Task Dependency Graph
+### Critical Path (Must Execute Sequentially)
 
 ```
-TASK-001 (directories)
-    │
-    ├──▶ TASK-002 (__init__.py files)
-    │        │
-    │        ├──▶ TASK-004 (Task dataclass)
-    │        │        │
-    │        │        └──▶ TASK-005 (short_id)
-    │        │                 │
-    │        │                 └──▶ TASK-006 (export Task)
-    │        │                          │
-    │        │                          └──▶ TASK-007 (TaskService)
-    │        │                                   │
-    │        │                                   ├──▶ TASK-008 (add_task)
-    │        │                                   ├──▶ TASK-009 (get_all_tasks)
-    │        │                                   ├──▶ TASK-010 (get_task)
-    │        │                                   │        │
-    │        │                                   │        ├──▶ TASK-011 (find_by_partial_id)
-    │        │                                   │        ├──▶ TASK-012 (update_task)
-    │        │                                   │        ├──▶ TASK-013 (delete_task)
-    │        │                                   │        └──▶ TASK-014 (toggle_complete)
-    │        │                                   │
-    │        │                                   └──▶ TASK-015 (get_task_count)
-    │        │                                            │
-    │        │                                            └──▶ TASK-016 (export TaskService)
-    │        │
-    │        ├──▶ TASK-017 (InputHandler)
-    │        │
-    │        └──▶ TASK-018 (Display basic)
-    │                 │
-    │                 ├──▶ TASK-019 (task_list)
-    │                 └──▶ TASK-020 (task_details)
-    │
-    └──▶ TASK-003 (exceptions)
-
-TASK-016 + TASK-017 + TASK-020
-    │
-    └──▶ TASK-021 (Menu class)
-             │
-             └──▶ TASK-022 (handlers)
-                      │
-                      └──▶ TASK-023 (export UI)
-                               │
-                               └──▶ TASK-024 (app.py + main.py)
+T001-T003 (Setup)
+   ↓
+T004-T011 (Foundation)
+   ↓
+T012-T022 (US1: Add Task)
+   ↓
+T023-T033 (US2: View All)
+   ↓
+T034-T043 (US3: View Details)
+   ↓
+T044-T056 (US4: Update)
+   ↓
+T057-T065 (US5: Delete)
+   ↓
+T066-T074 (US6: Toggle)
+   ↓
+T075-T097 (CLI Layer)
+   ↓
+T098-T104 (Bootstrap)
+   ↓
+T105-T116 (Polish)
 ```
 
----
+### Parallel Execution Opportunities
 
-## Summary
+**After Foundation (T011):**
+- UI components (T075-T085) can be built in parallel with user story implementations
+- All tasks marked `[P]` can run concurrently
 
-| Section | Tasks | Description |
-|---------|-------|-------------|
-| 1. Setup | TASK-001 to TASK-003 | Directory structure, packages, exceptions |
-| 2. Model | TASK-004 to TASK-006 | Task dataclass |
-| 3. Service | TASK-007 to TASK-016 | TaskService with all CRUD |
-| 4. Input | TASK-017 | InputHandler |
-| 5. Display | TASK-018 to TASK-020 | Display formatting |
-| 6. Menu | TASK-021 to TASK-023 | Menu controller |
-| 7. Bootstrap | TASK-024 | App entry point |
+**Independent User Stories:**
+- US3, US4, US5, US6 can be implemented in parallel after US1 and US2 are complete
+- Each user story's tests can be written in parallel
 
-**Total: 24 tasks**
+### Minimum Viable Product (MVP)
 
----
-
-## Verification Checklist
-
-After all tasks complete:
-
-- [x] `python main.py` starts application
-- [x] Welcome banner displays
-- [x] Menu shows options 1-6, 0, h
-- [x] Option 1: Add task works
-- [x] Option 2: List tasks works (empty state + with tasks)
-- [x] Option 3: View task details works
-- [x] Option 4: Update task works
-- [x] Option 5: Delete task works (with confirmation)
-- [x] Option 6: Toggle complete works
-- [x] Option h: Help displays
-- [x] Option 0: Exit with goodbye message
-- [x] Error: Empty title rejected
-- [x] Error: Invalid ID shows message
-- [x] Error: Ambiguous ID shows message
-- [x] Error: Invalid menu choice shows message
-- [x] All errors return to menu (no crash)
+For quickest value delivery, implement in this order:
+1. **MVP Scope:** T001-T033 (Setup + Foundation + US1 + US2)
+2. **Increment 1:** Add US3 (View Details)
+3. **Increment 2:** Add US4, US5 (Update, Delete)
+4. **Increment 3:** Add US6 (Toggle Complete)
+5. **Polish:** T105-T116
 
 ---
 
-*Tasks derived from Phase I Specification v1.0.0 and Plan v1.0.0*
-*Constitution v1.0.0 compliance verified*
+## Test Coverage Matrix
+
+| User Story | Test Count | Implementation Tasks | Status |
+|------------|------------|---------------------|--------|
+| Foundation | 2 | T004-T011 | Ready |
+| US-001 (Add) | 6 | T012-T022 | Ready |
+| US-002 (View All) | 5 | T023-T033 | Ready |
+| US-003 (View Details) | 4 | T034-T043 | Ready |
+| US-004 (Update) | 7 | T044-T056 | Ready |
+| US-005 (Delete) | 4 | T057-T065 | Ready |
+| US-006 (Toggle) | 4 | T066-T074 | Ready |
+| **TOTAL** | **32** | **116 tasks** | Ready |
+
+---
+
+## Constitutional Compliance
+
+### Article 2: Spec-Driven Development ✅
+- ✅ All tasks trace to spec.md or plan.md
+- ✅ Task IDs enable traceability
+- ✅ No features outside approved scope
+
+### Article 3: Agent Behavior ✅
+- ✅ Tasks are atomic and testable
+- ✅ Each task has clear preconditions and outputs
+- ✅ Full traceability chain maintained
+
+### Article 4: Phase Governance ✅
+- ✅ No Phase II+ features included
+- ✅ Only Phase I scope (in-memory, console, basic CRUD)
+- ✅ Technology constraints respected (Python stdlib only)
+
+### Article 6.6: TDD Mandate ✅
+- ✅ RED-GREEN-REFACTOR cycle followed
+- ✅ Tests written before implementation
+- ✅ 32 test scenarios covering all user stories
+- ✅ Each user story has independent test criteria
+
+---
+
+## Success Criteria
+
+**All 116 tasks completed means:**
+- ✅ All 6 user stories (US-001 to US-006) fully implemented
+- ✅ 32 unit tests passing with 90%+ coverage
+- ✅ Clean architecture with 3-layer separation
+- ✅ Full CLI with menu navigation
+- ✅ Comprehensive error handling
+- ✅ PEP 8 compliant code
+- ✅ Type hints and docstrings on all public interfaces
+- ✅ Application runs in-memory with no persistence
+- ✅ Constitution v2.0.0 fully compliant
+
+---
+
+*Generated from spec.md v1.1.0 and plan.md v1.1.0*
+*Complies with Constitution v2.0.0 Article 6.6 (TDD Mandate)*
+*Ready for implementation using RED-GREEN-REFACTOR cycle*

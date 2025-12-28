@@ -1,6 +1,5 @@
-"""Service layer."""
+"""Service layer - Phase I (In-Memory only)."""
 
-from .storage_service import StorageService
 from .task_service import TaskService
 
-__all__ = ["StorageService", "TaskService"]
+__all__ = ["TaskService"]

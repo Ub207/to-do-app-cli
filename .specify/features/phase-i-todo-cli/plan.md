@@ -11,10 +11,12 @@
 |-----------|-------|
 | **Phase** | I |
 | **Feature** | Todo CLI (In-Memory) |
-| **Spec Version** | 1.0.0 |
-| **Plan Version** | 1.0.0 |
-| **Status** | Draft |
+| **Spec Version** | 1.1.0 |
+| **Plan Version** | 1.1.0 |
+| **Status** | Approved |
 | **Created** | 2024-12-27 |
+| **Updated** | 2025-12-29 |
+| **Constitution** | v2.0.0 |
 
 ---
 
@@ -740,6 +742,8 @@ This plan explicitly excludes:
 
 ---
 
-*This plan implements Phase I Specification v1.0.0.*
-*This plan complies with Constitution v1.0.0.*
-*No implementation shall deviate from this plan without amendment.*
+*This plan implements Phase I Specification v1.1.0.*
+*This plan complies with Constitution v2.0.0 (Article-based governance).*
+*Per Article 2: Plan defines HOW to implement approved specification (WHAT).*
+*Per Article 6.6: All implementation must follow TDD (Test-Driven Development).*
+*No implementation shall deviate from this plan without constitutional amendment procedure.*
