@@ -49,3 +49,7 @@ htmlcov/
 
 # Local config
 .env.local
+
+# Database
+*.db
+data/todo.db
