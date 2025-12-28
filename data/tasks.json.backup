@@ -1,16 +1,16 @@
 {
   "version": "1.0.0",
-  "last_modified": "2025-12-27T16:55:28",
+  "last_modified": "2025-12-28T08:59:44",
   "tasks": [
     {
       "id": "f3ea8fd9-b2a7-460f-8762-cd49d362c0d4",
       "title": "Buy groceries",
       "description": "Milk, eggs, bread",
-      "completed": false,
+      "completed": true,
       "priority": null,
       "tags": [],
       "created_at": "2025-12-27T16:26:15",
-      "updated_at": "2025-12-27T16:26:15",
+      "updated_at": "2025-12-27T16:55:28",
       "due_date": null,
       "recurring": null
     },
@@ -59,6 +59,30 @@
       "tags": [],
       "created_at": "2025-12-27T16:55:28",
       "updated_at": "2025-12-27T16:55:28",
+      "due_date": null,
+      "recurring": null
+    },
+    {
+      "id": "9dfba340-db67-460b-8766-b0cc475aa125",
+      "title": "subah namaz prhna",
+      "description": "",
+      "completed": false,
+      "priority": null,
+      "tags": [],
+      "created_at": "2025-12-28T08:59:19",
+      "updated_at": "2025-12-28T08:59:19",
+      "due_date": null,
+      "recurring": null
+    },
+    {
+      "id": "fc7dc9be-9215-4403-a456-ffd354d0f3be",
+      "title": "nashta krna",
+      "description": "chai pratha",
+      "completed": false,
+      "priority": null,
+      "tags": [],
+      "created_at": "2025-12-28T08:59:44",
+      "updated_at": "2025-12-28T08:59:44",
       "due_date": null,
       "recurring": null
     }
